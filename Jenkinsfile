@@ -1,32 +1,46 @@
 pipeline {
-    
-	agent any
-	
-	tools {
+    agent any
+    tools {
         maven "MAVEN3"
         jdk "OracleJDK8"
     }
-	
+    
     environment {
-        NEXUS_USER = "admin"
-        NEXUS_PASS = "admin"
-        NEXUSPORT = "8081"
-        NEXUSIP = "54.87.140.148"
-        SNAP_REPO = "vprofile-snapshot"
-        RELEASE_REPO = "vprofile-release"
-	    NEXUS_GRP_REPO = "vpro-maven-group"
-        CENTRAL_REPO = "vpro-maven-central"
-        NEXUS_LOGIN = "nexuslogin"
-        ARTVERSION = "${env.BUILD_ID}"
+        SNAP_REPO = 'vprofile-snapshot'
+		NEXUS_USER = 'admin'
+		NEXUS_PASS = 'admin'
+		RELEASE_REPO = 'vprofile-release'
+		CENTRAL_REPO = 'vpro-maven-central'
+		NEXUSIP = '54.87.140.148'
+		NEXUSPORT = '8081'
+		NEXUS_GRP_REPO = 'vpro-maven-group'
+        NEXUS_LOGIN = 'nexuslogin'
     }
-	
-    stages{
-        
-        stage('BUILD'){
+
+    stages {
+        stage('Build'){
             steps {
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn -s settings.xml -DskipTests install'
+            }
+            post {
+                success {
+                    echo "Now Archiving."
+                    archiveArtifacts artifacts: '**/*.war'
+                }
+            }
+        }
+
+        stage('Test'){
+            steps {
+                sh 'mvn -s settings.xml test'
             }
 
         }
-    }       
-}    
+
+        stage('Checkstyle Analysis'){
+            steps {
+                sh 'mvn -s settings.xml checkstyle:checkstyle'
+            }
+        }
+    }
+}

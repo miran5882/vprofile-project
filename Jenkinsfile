@@ -15,7 +15,6 @@ pipeline {
 		NEXUSPORT = '8081'
 		NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
-        ARTVERSION = "${env.BUILD_ID}"
     }
 
     stages {
@@ -23,25 +22,4 @@ pipeline {
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
             }
-            post {
-                success {
-                    echo "Now Archiving."
-                    archiveArtifacts artifacts: '**/*.war'
-                }
-            }
         }
-
-        stage('Test'){
-            steps {
-                sh 'mvn -s settings.xml test'
-            }
-
-        }
-
-        stage('Checkstyle Analysis'){
-            steps {
-                sh 'mvn -s settings.xml checkstyle:checkstyle'
-            }
-        }
-    }
-}

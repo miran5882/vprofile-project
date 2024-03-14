@@ -13,11 +13,14 @@ pipeline {
         service = "vproprodsvc"
     }
 
-    stage('Deploy  ECS to prod') {
+    stages {
+
+        stage('Deploy  ECS to prod') {
             steps{
                 withAWS(credentials: 'awscresd', region: 'us-east-1') {
                     sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
                 }
             }
         }
+    }    
 }

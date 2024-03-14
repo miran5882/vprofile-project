@@ -21,6 +21,8 @@ pipeline {
     }
 
     stages {
+       
+       
         stage('Build'){
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
@@ -33,17 +35,21 @@ pipeline {
             }
         } 
 
-         stage('Test'){
+
+        stage('Test'){
             steps {
                 sh 'mvn -s settings.xml test'
             }
         }
+
 
         stage('Checkstyle Analysis'){
             steps {
                 sh 'mvn -s settings.xml checkstyle:checkstyle'
             }
         }
+
+
         stage('Sonar Analysis') {
             environment {
                 scannerHome = tool "${SONARSCANNER}"
@@ -60,7 +66,19 @@ pipeline {
                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
                 }
             }
-        }        
+        } 
+
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
     }
 }
          

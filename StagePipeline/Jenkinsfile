@@ -128,7 +128,6 @@ pipeline {
             }
         }
 
-
         stage('Deploy to ECS Staging') {
             steps{
                 withAWS(cerdentail: 'awscresd', region: 'us-east-1') {

@@ -11,7 +11,7 @@ pipeline {
 		NEXUS_PASS = 'admin'
 		RELEASE_REPO = 'vprofile-release'
 		CENTRAL_REPO = 'vpro-maven-central'
-		NEXUSIP = '172.31.25.34'
+		NEXUSIP = '44.200.160.181'
 		NEXUSPORT = '8081'
 		NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
@@ -25,7 +25,13 @@ pipeline {
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
             }
+        }
+    } 
+}
 
+
+
+/*
             post {
                 success {
                     echo "Now Archiving."
